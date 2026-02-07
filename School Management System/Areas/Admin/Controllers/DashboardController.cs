@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using School_Management_System.Utilites;
 
 namespace School_Management_System.Areas.Admin.Controllers
 {

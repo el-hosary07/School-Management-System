@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
 using School_Management_System.Models;
-using School_Management_System.Repositories;
-using School_Management_System.Repositories.IRepositories;
-using School_Management_System.Utilites;
+
 
 namespace School_Management_System
 {
@@ -20,11 +17,6 @@ namespace School_Management_System
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            builder.Services.AddTransient<IEmailSender, EmailSender>();
-
 
             // Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

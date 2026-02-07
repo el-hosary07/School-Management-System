@@ -7,5 +7,7 @@
         public float Amount { get; set; }
         public DateTime DueDate { get; set; }
         public int StudentId { get; set; }
+
+        public required Student Student { get; set; }
     }
 }
