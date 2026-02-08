@@ -1,70 +1,104 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
 using School_Management_System.Models;
 
 namespace School_Management_System.Areas.Admin.Controllers
 {
     [Area("Admin")]
-
     public class ClassController : Controller
     {
-        private ApplicationDbContext _context = new();
+        private readonly ApplicationDbContext _context;
+
+        public ClassController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
-            var classe = _context.Classes.AsQueryable();
-            return View(classe);
+            var classes = _context.Classes
+                .Include(c => c.Teacher)
+                .Include(c => c.ClassEnrollments)
+                .ThenInclude(ce => ce.Student)
+                .ToList();
+            return View(classes);
         }
 
         [HttpGet]
         public IActionResult Add()
         {
-            return View();
+            ViewBag.Teachers = _context.Teachers.ToList();
+            return View(new Class());
         }
 
         [HttpPost]
-        public IActionResult Add(Class classe)
+        public IActionResult Add(Class classObj)
         {
-            _context.Classes.Add(classe);
-            _context.SaveChanges();
-
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                _context.Classes.Add(classObj);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            ViewBag.Teachers = _context.Teachers.ToList();
+            return View(classObj);
         }
 
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var classe = _context.Classes.Find(id);
+            var classObj = _context.Classes.Find(id);
+            if (classObj == null) return NotFound();
 
-            if (classe is null)
-                return RedirectToAction("NotFoundPage", "Home");
-
-            return View(classe);
+            ViewBag.Teachers = _context.Teachers.ToList();
+            return View(classObj);
         }
 
         [HttpPost]
-        public IActionResult Edit(Class classe)
+        public IActionResult Edit(int id, Class classObj)
         {
-            _context.Classes.Update(classe);
-            _context.SaveChanges();
+            if (id != classObj.Id) return NotFound();
 
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                _context.Update(classObj);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewBag.Teachers = _context.Teachers.ToList();
+            return View(classObj);
         }
+
+
+
 
         public IActionResult Delete(int id)
         {
-            var classe = _context.Classes.Find(id);
+            var classObj = _context.Classes.Find(id);
+            if (classObj != null)
+            {
+                // حذف ClassEnrollments أولاً
+                var enrollments = _context.ClassEnrollments.Where(e => e.ClassId == id);
+                _context.ClassEnrollments.RemoveRange(enrollments);
 
-            if (classe is null)
-                return RedirectToAction("NotFoundPage", "Home");
-
-            _context.Classes.Remove(classe);
-            _context.SaveChanges();
-
+                _context.Classes.Remove(classObj);
+                _context.SaveChanges();
+            }
             return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Details(int id)
+        {
+            var classObj = _context.Classes
+                .Include(c => c.Teacher)
+                .Include(c => c.ClassEnrollments)
+                .ThenInclude(ce => ce.Student)
+                .FirstOrDefault(c => c.Id == id);
+
+            if (classObj == null) return NotFound();
+            return View(classObj);
         }
     }
 }
-
-
-
-

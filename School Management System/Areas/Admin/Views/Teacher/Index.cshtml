@@ -1,18 +1,18 @@
 ﻿@using School_Management_System.Models.VM
-@model IEnumerable<StudentVM>
+@model IEnumerable<TeacherVM>
 
 <div class="content container-fluid">
     
     <div class="page-header">
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-6 col-12">
-                <h5 class="text-uppercase mb-0 mt-0 page-title">All Students</h5>
+                <h5 class="text-uppercase mb-0 mt-0 page-title">All Teachers</h5>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                 <ul class="breadcrumb float-right p-0 mb-0">
                     <li class="breadcrumb-item"><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-                    <li class="breadcrumb-item"><a href="index.html">Students</a></li>
-                    <li class="breadcrumb-item"><span>All Students</span></li>
+                    <li class="breadcrumb-item"><a href="index.html">Teachers</a></li>
+                    <li class="breadcrumb-item"><span>All Teachers</span></li>
                 </ul>
             </div>
         </div>
@@ -23,7 +23,7 @@
         <div class="col-sm-4 col-12"></div>
         <div class="col-sm-8 col-12 text-right add-btn-col">
             <a href="@Url.Action("Add")" class="btn btn-primary btn-rounded float-right">
-                <i class="fas fa-plus"></i> Add Student
+                <i class="fas fa-plus"></i> Add Teacher
             </a>
             <div class="view-icons">
                 <a href="@Url.Action("Index")" class="grid-view btn btn-link active"><i class="fas fa-th"></i></a>
@@ -37,13 +37,13 @@
         <div class="col-sm-6 col-md-3">
             <div class="form-group form-focus">
                 <input type="text" class="form-control floating">
-                <label class="focus-label">Student ID</label>
+                <label class="focus-label">Teacher ID</label>
             </div>
         </div>
         <div class="col-sm-6 col-md-3">
             <div class="form-group form-focus">
                 <input type="text" class="form-control floating">
-                <label class="focus-label">Student Name</label>
+                <label class="focus-label">Teacher Name</label>
             </div>
         </div>
         <div class="col-sm-6 col-md-3">
@@ -61,12 +61,12 @@
         </div>
     </div>
 
-    <!-- Students Grid -->
+    <!-- Teachers Grid -->
     <div class="row staff-grid-row">
         @if (!Model.Any())
         {
             <div class="col-12 text-center">
-                <p class="text-muted mt-5">No Students</p>
+                <p class="text-muted mt-5">No Teachers</p>
             </div>
         }
         else
@@ -77,7 +77,7 @@
                     <div class="profile-widget">
                         <div class="profile-img">
                             <a asp-action="Details" asp-route-id="@item.Id" class="avatar">
-                                @(string.IsNullOrEmpty(item.FirstName) ? "S" : item.FirstName[0].ToString().ToUpper())
+                                @(string.IsNullOrEmpty(item.Name) ? "S" : item.Name[0].ToString().ToUpper())
                             </a>
                         </div>
                         <div class="dropdown profile-action">
@@ -95,10 +95,10 @@
                         </div>
                         <h4 class="user-name m-t-10 m-b-0 text-ellipsis">
                             <a asp-action="Details" asp-route-id="@item.Id">
-                                @item.FirstName @item.LastName
+                                @item.Name 
                             </a>
                         </h4>
-                        <div class="small text-muted">@(item.ClassName ?? "لا يوجد كلاس")</div>
+                        <div class="small text-muted">@(item.SubjectName ?? "No Subject")</div>
                     </div>
                 </div>
             }

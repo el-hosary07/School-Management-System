@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
 using School_Management_System.Models;
+using School_Management_System.Models.VM;
 
 namespace School_Management_System.Areas.Admin.Controllers
 {
@@ -11,44 +13,142 @@ namespace School_Management_System.Areas.Admin.Controllers
         private ApplicationDbContext _context = new();
         public IActionResult Index()
         {
-            var student = _context.Students.AsQueryable();
-            return View(student);
+            var students = _context.Students
+                .Include(s => s.ClassEnrollments)
+                .ThenInclude(ce => ce.Class)
+                .Select(s => new StudentVM
+                {
+                    Id = s.Id,
+                    FirstName = s.FirstName,
+                    LastName = s.LastName,
+                    ClassName = s.ClassEnrollments.FirstOrDefault().Class.Name+" "+ s.ClassEnrollments.FirstOrDefault().Class.Section
+                })
+                .ToList();
+
+            return View(students);
         }
+
+
 
         [HttpGet]
         public IActionResult Add()
         {
-            return View();
+            ViewBag.Classes = _context.Classes.ToList();  // للـ dropdown
+            return View(new AddStudentVM());
         }
 
         [HttpPost]
-        public IActionResult Add(Student student)
+        public IActionResult Add(AddStudentVM model)
         {
-            _context.Students.Add(student);
-            _context.SaveChanges();
+            if (model.Password == model.ConfirmPassword)
+            {
+                
+                var student = new Student
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    BD = model.BD,
+                    Email = model.Email,
+                    Password = model.Password,
+                    ConfirmPassword = model.Password,
+                    Phone = model.Phone,
+                    ClassEnrollments = new List<ClassEnrollment>() 
+                };
 
-            return RedirectToAction(nameof(Index));
+                _context.Students.Add(student);
+                _context.SaveChanges();
+
+
+                var enrollment = new ClassEnrollment
+                {
+                    StudentId = student.Id,
+                    ClassId = model.ClassId,
+                    EnrollmentDate = DateTime.Now,
+                    Status = true
+                };
+
+                _context.ClassEnrollments.Add(enrollment);
+                _context.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewBag.Classes = _context.Classes.ToList();
+            return View(model);
         }
 
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var student = _context.Students.Find(id);
+            var student = _context.Students
+                .Include(s => s.ClassEnrollments)
+                .ThenInclude(ce => ce.Class)
+                .FirstOrDefault(s => s.Id == id);
 
-            if (student is null)
+            if (student == null)
                 return RedirectToAction("NotFoundPage", "Home");
 
-            return View(student);
+            var model = new AddStudentVM
+            {
+                Id = student.Id,
+                FirstName = student.FirstName,
+                LastName = student.LastName,
+                Email = student.Email,
+                Phone = student.Phone,
+                BD = student.BD,
+                ClassId = student.ClassEnrollments?.FirstOrDefault()?.ClassId ?? 0
+            };
+
+            ViewBag.Classes = _context.Classes.ToList();
+            return View(model);
         }
 
         [HttpPost]
-        public IActionResult Edit(Student student)
+        public IActionResult Edit(int id, AddStudentVM model)
         {
-            _context.Students.Update(student);
-            _context.SaveChanges();
+          
 
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                var student = _context.Students.Find(id);
+                if (student == null)
+                    return RedirectToAction("NotFoundPage", "Home");
+
+                // Update Student
+                student.FirstName = model.FirstName;
+                student.LastName = model.LastName;
+                student.Email = model.Email;
+                student.Phone = model.Phone;
+                student.BD = model.BD;
+
+                // Update Class Enrollment
+                var enrollment = student.ClassEnrollments?.FirstOrDefault();
+                if (enrollment != null)
+                {
+                    enrollment.ClassId = model.ClassId;
+                }
+                else if (model.ClassId > 0)
+                {
+                    // Add new enrollment if none exists
+                    enrollment = new ClassEnrollment
+                    {
+                        StudentId = student.Id,
+                        ClassId = model.ClassId,
+                        EnrollmentDate = DateTime.Now,
+                        Status = true
+                    };
+                    _context.ClassEnrollments.Add(enrollment);
+                }
+
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewBag.Classes = _context.Classes.ToList();
+            return View(model);
         }
+
+
 
         public IActionResult Delete(int id)
         {

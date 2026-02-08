@@ -7,6 +7,6 @@
         public string Author { get; set; }
         public int CopiesAvailable { get; set; }
 
-        public required ICollection<BookIssue> BookIssues { get; set; }
+        public  ICollection<BookIssue> BookIssues { get; set; }
     }
 }

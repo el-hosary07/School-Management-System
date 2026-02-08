@@ -9,7 +9,7 @@
         public int StudentId { get; set; }
         public int BookId { get; set; }
 
-        public required Student Student { get; set; }
-        public required Book Book { get; set; }
+        public  Student Student { get; set; }
+        public  Book Book { get; set; }
     }
 }

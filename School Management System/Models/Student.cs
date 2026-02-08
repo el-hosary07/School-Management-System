@@ -1,6 +1,4 @@
-﻿using Microsoft.Build.Tasks.Deployment.Bootstrapper;
-
-namespace School_Management_System.Models
+﻿namespace School_Management_System.Models
 {
     public class Student
     {
@@ -14,10 +12,10 @@ namespace School_Management_System.Models
         public string Phone { get; set; } = string.Empty;
 
 
-        public required ICollection<ClassEnrollment> ClassEnrollments { get; set; }
-        public required ICollection<ExamResult> ExamResults { get; set; }
-        public required ICollection<Attendance> Attendances { get; set; }
-        public required ICollection<BookIssue> BookIssues { get; set; }
-        public required ICollection<Fee> Fees { get; set; }
+        public  ICollection<ClassEnrollment> ClassEnrollments { get; set; }
+        public  ICollection<ExamResult> ExamResults { get; set; }
+        public  ICollection<Attendance> Attendances { get; set; }
+        public  ICollection<BookIssue> BookIssues { get; set; }
+        public  ICollection<Fee> Fees { get; set; }
     }
 }

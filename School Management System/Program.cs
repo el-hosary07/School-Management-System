@@ -12,6 +12,8 @@ namespace School_Management_System
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+
             // ================= SERVICES =================
 
             builder.Services.AddControllersWithViews();

@@ -9,8 +9,8 @@
 
 
         
-        public required Student Student { get; set; }    
-        public required Exam Exam { get; set; }
+        public  Student Student { get; set; }    
+        public  Exam Exam { get; set; }
 
     }
 }

@@ -8,7 +8,7 @@
         public int StudentId { get; set; }
         public int ClassId { get; set; }
 
-        public required Student Student { get; set; }
-        public required Class Class { get; set; }
+        public  Student Student { get; set; }
+        public  Class Class { get; set; }
     }
 }

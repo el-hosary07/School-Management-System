@@ -14,10 +14,10 @@ namespace School_Management_System.Models
 
 
 
-        public required Exam Exam { get; set; }
-        public required ICollection<ExamResult> ExamResults { get; set; }
-        public required ICollection<Class> Classes { get; set; }
-        public required ICollection<SubjectTeacher> SubjectTeachers { get; set; }
+        public  Exam Exam { get; set; }
+        public  ICollection<ExamResult> ExamResults { get; set; }
+        public  ICollection<Class> Classes { get; set; }
+        public  ICollection<SubjectTeacher> SubjectTeachers { get; set; }
 
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Tasks.Deployment.Bootstrapper;
+﻿
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace School_Management_System.Models
 {
@@ -9,11 +10,13 @@ namespace School_Management_System.Models
         public string Section { get; set; }
         public int TeacherId { get; set; }
 
+        [ValidateNever]
+        public Teacher Teacher { get; set; } = null!;
 
-        public required Teacher Teacher { get; set; }
-        public required ICollection<Attendance> Attendances { get; set; }
-        public required ICollection<ClassEnrollment> ClassEnrollments { get; set; }
-
-
+        public ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
+        public ICollection<ClassEnrollment> ClassEnrollments { get; set; } = new List<ClassEnrollment>();
     }
+
+
 }
+
