@@ -1,0 +1,30 @@
+﻿@model School_Management_System.Models.BookIssue
+@{
+    ViewData["Title"] = "Issue Book";
+    var book = ViewBag.Book as School_Management_System.Models.Book;
+    var students = ViewBag.Students as List<School_Management_System.Models.Student>;
+}
+
+<div class="content container-fluid">
+    <div class="page-header">
+        <h5>Issue Book: @book.Title</h5>
+    </div>
+
+    <form method="post" asp-action="IssueBook">
+        <input type="hidden" name="bookId" value="@book.Id" />
+
+        <div class="form-group">
+            <label>Select Student</label>
+            <select name="studentId" class="form-control" required>
+                <option value="">Choose Student</option>
+                @foreach (var student in students)
+                {
+                    <option value="@student.Id">@student.FirstName @student.LastName</option>
+                }
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">Issue Book</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

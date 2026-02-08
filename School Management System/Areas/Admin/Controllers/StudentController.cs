@@ -27,6 +27,22 @@ namespace School_Management_System.Areas.Admin.Controllers
 
             return View(students);
         }
+        //public IActionResult Details(int id)
+        //{
+        //    var student = _context.Students
+        //        .Include(s => s.ClassEnrollments)
+        //            .ThenInclude(ce => ce.Class)
+        //        .Include(s => s.ExamResults)
+        //            .ThenInclude(er => er.Subject)
+        //        .Include(s => s.Attendances)
+        //        .Include(s => s.BookIssues)
+        //            .ThenInclude(bi => bi.Book)
+        //        .Include(s => s.Fees)
+        //        .FirstOrDefault(s => s.Id == id);
+
+        //    if (student == null) return NotFound();
+        //    return View(student);
+        //}
 
 
 

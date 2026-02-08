@@ -1,0 +1,66 @@
+﻿@model School_Management_System.Models.Book
+@{
+    ViewData["Title"] = "Edit Book";
+}
+
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <h5 class="text-uppercase mb-0 mt-0 page-title">Edit Book</h5>
+            </div>
+            <div class="col-lg-6">
+                <ul class="breadcrumb float-right p-0 mb-0">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index")"><i class="fas fa-home"></i></a></li>
+                    <li class="breadcrumb-item"><span>Edit Book</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" asp-action="Edit">
+                            <input type="hidden" asp-for="Id" />
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label asp-for="Title" class="control-label">Title</label>
+                                        <input asp-for="Title" class="form-control" />
+                                        <span asp-validation-for="Title" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Author" class="control-label">Author</label>
+                                        <input asp-for="Author" class="form-control" />
+                                        <span asp-validation-for="Author" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label asp-for="TotalCopies" class="control-label">Total Copies</label>
+                                        <input asp-for="TotalCopies" class="form-control" type="number" min="1" />
+                                        <span asp-validation-for="TotalCopies" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="CopiesAvailable" class="control-label">Available Copies</label>
+                                        <input asp-for="CopiesAvailable" class="form-control" type="number" min="0" />
+                                        <span asp-validation-for="CopiesAvailable" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-12 text-center mt-4">
+                                    <button type="submit" class="btn btn-primary mr-2">
+                                        <i class="fas fa-save"></i> Update Book
+                                    </button>
+                                    <a href="@Url.Action("Index")" class="btn btn-secondary">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

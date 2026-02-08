@@ -1,0 +1,233 @@
+﻿@* @model Student
+@{
+    ViewData["Title"] = "Student Profile";
+}
+
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <h5 class="text-uppercase mb-0 mt-0 page-title">Student Profile</h5>
+            </div>
+            <div class="col-lg-6">
+                <ul class="breadcrumb float-right p-0 mb-0">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index")"><i class="fas fa-home"></i></a></li>
+                    <li class="breadcrumb-item"><span>Student Profile</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="row">
+            <!-- معلومات الطالب الأساسية -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-8">
+                                <h4>@Model.FirstName @Model.LastName</h4>
+                                <p class="text-muted mb-1">ID: @Model.Id</p>
+                                <p class="mb-0"><i class="fas fa-envelope"></i> @Model.Email</p>
+                            </div>
+                            <div class="col-4 text-right">
+                                <span class="badge badge-primary">Student</span>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Birth Date:</strong> @Model.BD.ToString("dd/MM/yyyy")</p>
+                                <p><strong>Phone:</strong> @Model.Phone</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p>
+                                    <strong>Current Class:</strong>
+                                    @(Model.ClassEnrollments?.FirstOrDefault()?.Class?.Name ?? "N/A") -
+                                    @(Model.ClassEnrollments?.FirstOrDefault()?.Class?.Section ?? "")
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary mb-2">Edit Profile</a>
+                        <a asp-controller="ExamResult" asp-action="Index" asp-route-studentId="@Model.Id" class="btn btn-info mb-2">Exam Results</a>
+                        <a asp-controller="Attendance" asp-action="Index" asp-route-studentId="@Model.Id" class="btn btn-warning mb-2">Attendance</a>
+                        <a asp-controller="BookIssue" asp-action="Index" asp-route-studentId="@Model.Id" class="btn btn-success mb-2">Book Issues</a>
+                        <a asp-controller="Fee" asp-action="Index" asp-route-studentId="@Model.Id" class="btn btn-secondary">Fees</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الصفوف -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-graduation-cap"></i> Current Class</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.ClassEnrollments != null && Model.ClassEnrollments.Any())
+                        {
+                            var currentClass = Model.ClassEnrollments.First();
+                            <p><strong>Class:</strong> @currentClass.Class.Name - @currentClass.Class.Section</p>
+                            <p><strong>Enrolled:</strong> @currentClass.EnrollmentDate.ToString("dd/MM/yyyy")</p>
+                            <p>
+                                <strong>Status:</strong>
+                                <span class="badge badge-success">@(currentClass.Status ? "Active" : "Inactive")</span>
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No class enrollment</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الدرجات -->
+        <div class="row mt-4">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="fas fa-chart-line"></i> Recent Exam Results</h6>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.ExamResults != null && Model.ExamResults.Any())
+                        {
+                            @foreach (var result in Model.ExamResults.Take(5))
+                            {
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>@result.Subject.Name</span>
+                                    <span class="badge badge-@(result.Grade >= 70 ? "success" : "warning")">@result.Grade%</span>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">No exam results</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- الحضور -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="fas fa-calendar-check"></i> Attendance Summary</h6>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Attendances != null && Model.Attendances.Any())
+                        {
+                            var total = Model.Attendances.Count();
+                            var present = Model.Attendances.Count(a => a.IsPresent);
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-success" style="width: @(present * 100 / total)%"></div>
+                            </div>
+                            <p><strong>@present/@total</strong> Present (@((present * 100 / total):F1)%)</p>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No attendance records</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الكتب المستعارة -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="fas fa-book"></i> Issued Books</h6>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.BookIssues != null && Model.BookIssues.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Book</th>
+                                            <th>Issue Date</th>
+                                            <th>Return Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var issue in Model.BookIssues)
+                                        {
+                                            <tr>
+                                                <td>@issue.Book.Title</td>
+                                                <td>@issue.IssueDate.ToString("dd/MM/yyyy")</td>
+                                                <td>@issue.ReturnDate.ToString("dd/MM/yyyy")</td>
+                                                <td>
+                                                    @if (issue.ReturnDate > DateTime.Now)
+                                                    {
+                                                        <span class="badge badge-warning">Active</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge badge-secondary">Returned</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No issued books</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- المصروفات -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="fas fa-money-bill"></i> Fees</h6>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Fees != null && Model.Fees.Any())
+                        {
+                            @foreach (var fee in Model.Fees.Take(5))
+                            {
+                                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                                    <span>@fee.Description</span>
+                                    <span class="font-weight-bold">
+                                        @fee.Amount EGP
+                                        <span class="badge @(fee.IsPaid ? "success" : "danger")">
+                                            @(fee.IsPaid ? "Paid" : "Pending")
+                                        </span>
+                                    </span>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">No fees records</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> *@
